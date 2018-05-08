@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <!-- ASPECTJRT classpath container -->
+   <!-- uses of the ASPECTJRT_LIB variable are migrated to this -->
+   <extension point="org.eclipse.jdt.core.classpathContainerInitializer">            
+     <classpathContainerInitializer                                          
+        id="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"                                                        
+        class="org.eclipse.ajdt.internal.core.AspectJRTContainerInitializer"/>                           
+   </extension>
+
+   <!-- ASPECTJRT_LIB classpath variable -->
+   <extension point="org.eclipse.jdt.core.classpathVariableInitializer">
+     <classpathVariableInitializer variable="ASPECTJRT_LIB"
+       class="org.eclipse.ajdt.internal.core.AspectJRTInitializer"/>
+   </extension>
+
+	<!-- FIX for 75052 -->
+	<extension point="org.eclipse.team.core.fileTypes">
+   		<fileTypes extension="ajmap" type="binary"/>
+   		<fileTypes extension="aj" type="text"/>
+	</extension>
+
+   <!-- Define AspectJ Builder -->
+   <extension
+         id="ajbuilder"
+         name="%aspectJBuilder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.ajdt.core.builder.AJBuilder">
+         </run>
+      </builder>
+   </extension>
+
+   <!-- declares new content type for AspectJ source, derived from java source -->
+   <!-- AJDT 1.7 -->
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+	  <content-type id="ajSource" name="%aspectJSource" 
+		base-type="org.eclipse.jdt.core.javaSource"
+		file-extensions="aj"/>
+   </extension>
+
+   <!-- Refactoring participants -->
+   <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
+      <renameParticipant
+            class="org.eclipse.ajdt.internal.core.refactoring.AspectRenameParticipant"
+            name="%pointcutRenameParticipant"
+            id="org.eclipse.ajdt.core.refactoring.pointcut.typeRename">
+         <enablement>
+           <with variable="affectedNatures">
+             <iterate operator="or">
+               <equals value="org.eclipse.ajdt.ui.ajnature"/>
+             </iterate>
+           </with>
+           <with variable="element">
+   	         <instanceof value="org.eclipse.jdt.core.IType"/>
+           </with>
+         </enablement>
+      </renameParticipant>
+      <renameParticipant
+            class="org.eclipse.ajdt.internal.core.refactoring.ITDAccessorRenameParticipant"
+            id="org.eclipse.ajdt.core.refactoring.itd.accessors"
+            name="ITD Getter Setter rename participant">
+         <enablement>
+            <with
+                  variable="affectedNatures">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="org.eclipse.ajdt.ui.ajnature">
+                  </equals>
+               </iterate>
+            </with>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.jdt.core.IField">
+               </instanceof>
+            </with>
+         </enablement>
+      </renameParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.contribution.weaving.jdt.cuprovider">
+      <provider
+            class="org.eclipse.ajdt.core.javaelements.AJCompilationUnitProvider"
+            file_extension="aj">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.contribution.weaving.jdt.sourcetransformer">
+      <transformer
+            class="org.eclipse.ajdt.core.codeconversion.AJSourceTransformer"
+            file_extension="aj">
+      </transformer>
+   </extension>
+    <extension
+       point="org.eclipse.contribution.weaving.jdt.weavablenature">
+  	  <nature
+           natureid="org.eclipse.ajdt.ui.ajnature"
+           requiresReindexing="true">
+	    </nature>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.ajdt.core.AJDTPreferencesInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.contribution.jdt.itdawareness.ContentAssistAdapter"
+            class="org.eclipse.ajdt.internal.core.contentassist.ContentAssistProviderAdapterFactory">
+         <adapter
+               type="org.eclipse.contribution.jdt.itdawareness.IJavaContentAssistProvider">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.contribution.jdt.itdawareness.SearchAdapter"
+            class="org.eclipse.ajdt.internal.core.search.SearchAdapterFactory">
+         <adapter
+               type="org.eclipse.contribution.jdt.itdawareness.ISearchProvider">
+         </adapter>
+      </factory>
+   </extension>
+   <!-- for AJDT in 3.6 only -->
+   <extension
+         point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
+            eclipseRuntime="true"
+            headless="true"
+            library="ajc_compiler_adapter.jar">
+      </extraClasspathEntry>
+   </extension>
+   <extension
+         point="org.eclipse.ant.core.antTasks">
+      <antTask
+            class="org.eclipse.ajdt.core.ant.AjcTask"
+            library="ajc_compiler_adapter.jar"
+            name="iajc">
+      </antTask>
+   </extension>
+</plugin>

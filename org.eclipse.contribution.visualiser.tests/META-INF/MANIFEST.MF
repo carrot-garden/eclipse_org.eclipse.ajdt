@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Visualser Tests
+Bundle-SymbolicName: org.eclipse.contribution.visualiser.tests;singleton:=true
+Bundle-Version: 2.2.4.qualifier
+Bundle-ClassPath: .
+Export-Package: org.eclipse.contribution.visualiser.tests
+Require-Bundle: org.eclipse.ui,
+ org.junit,
+ org.eclipse.contribution.visualiser,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-Vendor: Eclipse AspectJ Development Tools

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+     <extension
+         point="org.eclipse.contribution.xref.core.providers">
+      <xrefProvider
+            enabled="true"
+            label="My Label"
+            class="org.eclipse.contribution.xref.core.tests.TestProvider"
+            id="org.eclipse.contribution.xref.core.tests.testProvider">
+      </xrefProvider>
+      <xrefProvider
+            enabled="true"
+            label="My Label 2"
+            class="org.eclipse.contribution.xref.core.tests.UnknownProvider"
+            id="org.eclipse.contribution.xref.core.tests.unknownProvider">
+      </xrefProvider>
+   </extension>
+
+</plugin>

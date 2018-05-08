@@ -1,0 +1,14 @@
+<toc label="AspectJ Language Guide">
+	<topic label="AspectJ Home" href="http://eclipse.org/aspectj"/>	
+	<topic label="AspectJ Documentation and Resources" href="http://eclipse.org/aspectj/docs.php"/>	
+	<topic href="http://eclipse.org/aspectj/doc/released/progguide/index.html" label="Programming Guide">
+	</topic>
+	<topic href="http://eclipse.org/aspectj/doc/released/devguide/index.html" label="Development Environment Guide">
+	</topic>
+	<topic href="http://eclipse.org/aspectj/doc/released/adk15notebook/index.html" label="The AspectJ 5 Developer&apos;s Notebook">
+	</topic>
+	<topic href="http://eclipse.org/aspectj/doc/released/pdguide/index.html" label="The AspectJ Problem Diagnosis Guilde">
+	</topic>
+	<topic label="FAQ" href="http://eclipse.org/aspectj/doc/released/faq.php"/>
+	<topic label="Quick reference" href="http://eclipse.org/aspectj/doc/released/quick5.pdf"/>
+</toc>

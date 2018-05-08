@@ -1,0 +1,393 @@
+setup:
+
+- install the Spacewar example
+- activate the debug.ajproperties
+
+
+Test1 - position of XRef view in workbench
+------------------------------------------
+
+- go to the java perspective
+- reset the perspective layout (Window > Reset Perspective)
+- go to Window > show view > other > AspectJ > Cross References
+- click "ok"
+- the Cross references view should appear underneath the outline
+  view 
+							(XREF_VIEW_1)
+
+
+Test2 - link with editor button
+-------------------------------
+
+- ensure that the "link with editor" button in the xref view is 
+  selected and that the "show cross references for entire file" button
+  isn't
+- open spacewar/debug.aj in the editor
+- click around the file and the entries in the xref view should 
+  mirror your selection 
+							(XREF_VIEW_2)
+- follow one of the links in the XRef view that opens
+  a new file - the contents of the XRef view should now contain the 
+  cross references for this new selection
+							(XREF_VIEW_3)
+- return to having debug.aj active in the editor
+- turn off "link with editor"
+- click around the file and the contents of the xref view shouldn't 
+  change.
+							(XREF_VIEW_4)
+- follow one of the links in the XRef view that opens
+  a new file - the contents of the XRef view shouldn't change
+							(XREF_VIEW_5)
+
+- open Game.java in the editor
+- ensure that "link with editor" is selected
+- click around the file and the entries in the xref view should 
+  mirror your selection 
+							(XREF_VIEW_6)
+- follow one of the links in the XRef view that opens
+  a new file - the contents of the XRef view should now contain the 
+  cross references for this new selection
+							(XREF_VIEW_7)
+- return to having Game.java active in the editor
+- turn off "link with editor"
+- click around the file and the contents of the xref view shouldn't 
+  change.
+							(XREF_VIEW_8)
+
+- follow one of the links in the XRef view that opens
+  a new file - the contents of the XRef view shouldn't change
+							(XREF_VIEW_9)
+
+
+Test3 - ensure follows selections in the outline view
+-----------------------------------------------------
+
+
+- ensure that the "link with editor" button in the xref view is 
+  selected and that the "show cross references for entire file" button
+  isn't
+- open spacewar/debug.aj in the editor
+- click in the outline view and the xref view should 
+  mirror your selection
+							(XREF_VIEW_10)
+- turn off "link with editor"
+- click around the outline view and the contents of the xref view shouldn't 
+  change.
+							(XREF_VIEW_11)
+- open Game.java in the editor
+- ensure that "link with editor" is selected
+- click in the outline view and the xref view should mirror your
+  selection.
+							(XREF_VIEW_12)
+- turn off "link with editor"
+- click around the file and the contents of the xref view shouldn't 
+  change.
+							(XREF_VIEW_13)
+
+
+Test4 - remembers settings
+--------------------------
+
+- have "link with editor" and "show xrefs for entire file" 
+  turned on
+- close the cross reference view
+- open the cross reference view (Window > show view > other > 
+  AspectJ > Cross References)
+- check that "link with editor" and "show xrefs for entire 
+  file" are still turned on 
+							(XREF_VIEW_14)
+- have "link with editor" and "show xrefs for entire file" 
+  turned off
+- close the cross reference view
+- open the cross reference view (Window > show view > other > 
+  AspectJ > Cross References)
+- check that "link with editor" and "show xrefs for entire 
+  file" are still turned off 
+							(XREF_VIEW_15)
+- open up debug.aj in the editor
+- close the cross reference view
+- close debug.aj in the editor
+- bring up the cross reference view
+- the xref view shouldn't have any contents (the contents should not
+  have been persisted)			
+							(XREF_VIEW_16)
+
+Test 6 - selection should be visible in the xref view (scroll bar)
+------------------------------------------------------------------
+
+- open debug.aj in the editor
+- ensure that show all xrefs for file is selected
+- scroll down and select the following:
+
+    before(): allMethodsCut() {
+        if (traceMethods.getState()) {
+            infoWin.println("entering " + thisJoinPoint.getSignature());
+        }
+    }
+
+- this selection should be visible in the xref view (i.e. the scroll
+  bar should be in the position to show this)
+							(XREF_VIEW_17)
+
+Test 7 - bug 95726: "Show In" navigate menu entry and other menu entries
+------------------------------------------------------------------------
+
+- open debug.aj in the editor
+- close the cross references view
+- go to the Navigate menu and there should be a menu item
+  "Show In > Cross References" 
+  
+  							(XREF_VIEW_18)				
+
+- bring up the cross references view via
+
+	Navigate > Show In > Cross References
+	
+- the xref view should appear with the current
+  selection 
+  							(XREF_VIEW_19)	
+- close the cross references view
+- make a selection in the Outline view
+- right click and bring up the context menu of the outline view  	
+- this should contain an entry "Open Cross References"
+
+							(XREF_VIEW_20)	
+							
+- select this entry and the cross references view should open
+  containing the xrefs for the selected item														                  	                
+
+							(XREF_VIEW_21)	
+
+- select a project, package or file in the package explorer
+- right click and bring up the context menu of the package explorer  	
+- this should NOT contain an entry "Open Cross References"
+
+							(XREF_VIEW_22)	
+ 							
+- select a project, package or file in the package explorer
+- open the "Navigate > Show In" menu
+- the "Cross References" entry should be disabled (greyed out)  
+
+							(XREF_VIEW_23)	
+							
+- select something in the outline view
+- open the "Navigate > Show In" menu
+- the "Cross References" entry should be activated  
+
+							(XREF_VIEW_24)	
+
+Test for clicking around Package Explorer
+-----------------------------------------
+
+- open the cross references view
+- click around the package explorer
+- the package explorer should be responsive to your clicks
+  i.e. it should not freeze up.
+  
+  							(XREF_VIEW_25)	
+  							
+Test for bug 103001
+-------------------
+
+- open the cross references view
+- check that there are no "go back" and "go forward" buttons
+  on the taskbar
+  							(XREF_VIEW_26)
+
+Test Applying XRef Filters should update tree, (Feature 95724)
+----------------------------
+
+Test Exclude, (Not for whole document)
+--------------------------------------
+
+- Open the Cross References View, ('Window > Show View > Other... > AspectJ > Cross References').
+- Open the Spacewar Example project
+- If it is not already, activate the demo build configuration
+- Open the Display1.aj file from within the spacewar package, in an editor window
+- Navigate to line 85, (some after advice)
+- If necessary, in the Cross References View, deselect the 'Show the cross references for the entire file'
+  button on the toolbar
+- The Cross References View should now have a tree like this:
+
+   |- afterReturning(Pilot)
+       |->> advises
+		   |- Game: ...
+		   |- Game: ...
+		   |- Game: ...
+		   |- Robot: ...
+  							(XREF_VIEW_27)
+  							
+- Bring up the View Menu from the drop down button in the Cross References toolbar
+- Select the 'Filters...' button
+- A 'Cross References Filter' dialog should appear
+  							(XREF_VIEW_28)
+
+- In the presented dialog, de-select any relationships that are checked
+- Check the 'advises' relationship checkbox and click OK
+- The Cross References View should now have a tree like this:
+
+	- afterReturning(Pilot)
+  							(XREF_VIEW_29)
+
+Test Include, (Not for whole document)
+--------------------------------------
+
+- Bring up the View Menu from the drop down button in the Cross References toolbar
+- Select the 'Filters...' button
+- In the presented dialog, the 'advises' relationship checkbox should be checked
+  							(XREF_VIEW_30)
+  							
+- Uncheck the 'advises' relationship checkbox and click OK
+- The Cross References View should now have a tree like this:
+
+   |- afterReturning(Pilot)
+       |->> advises
+		   |- Game: ...
+		   |- Game: ...
+		   |- Game: ...
+		   |- Robot: ...
+  							(XREF_VIEW_31)
+
+Test Persistence of Filters, (Not for whole document)
+-----------------------------------------------------
+
+- Bring up the View Menu from the drop down button in the Cross References toolbar
+- Select the 'Filters...' button
+- In the presented dialog, press 'Select All' and click OK
+- The Cross References View should now have a tree like this:
+
+	- afterReturning(Pilot)
+  							(XREF_VIEW_32)
+
+- Close and reopen Eclipse
+- Navigate to Display1.aj and line 85
+- The Cross References View should still have a tree like this:
+
+	- afterReturning(Pilot)
+  							(XREF_VIEW_33)
+
+- Bring up the View Menu from the drop down button in the Cross References toolbar
+- Select the 'Filters...' button
+- In the presented dialog, all filters checkboxes should be checked
+  							(XREF_VIEW_34)
+
+- Click de-select all and click OK
+
+- The Cross References View should now have a tree like this:
+
+   |- afterReturning(Pilot)
+       |->> advises
+		   |- Game: ...
+		   |- Game: ...
+		   |- Game: ...
+		   |- Robot: ...
+  							(XREF_VIEW_35)
+
+Test Exclusion and inclusion for whole document
+-----------------------------------------------
+
+- Navigate to Display1.aj and line 85
+- Select the 'Show the cross references for the entire file' button on the toolbar
+- The Cross References View should now have a tree like this:
+
+  (C) Display1
+   |- paintObjects(Graphics)
+   |   |- method-call(...
+   |	   |->> advised by
+   |		   |- Coordinator.before():...
+   |		   |- Coordinator.after():...
+   |- (A) SpaceObjectPainting
+	   |- SpaceObject.paint(Graphics)
+	   |   |->> declared on
+	   |	   |- (C) SpaceObject
+	   |- Ship.color
+	   |   |->> declared on
+	   |	   |- (C) Ship
+	   |- afterReturning(Pilot)
+	   |   |->>  advises
+	   |	   |- Game: ...
+	   |	   |- Game: ...
+	   |	   |- Game: ...
+	   |	   |- Robot: ...
+	   |- Ship.paint(Graphics)
+	   |   |->> declared on
+	   |	   |- (C) Ship
+	   |- Bullet.paint(Graphics)
+	   |   |->> declared on
+	   |	   |- (C) Bullet
+	   |- EnergyPacket.paint(Graphics)
+		   |->> declared on
+			   |- (C) EnergyPacket
+  							(XREF_VIEW_36)
+
+- Bring up the View Menu from the drop down button in the Cross References toolbar
+- Select the 'Filters...' button
+- In the presented dialog, check the 'declared on' checkbox and click OK
+- The Cross References View should now have a tree like this:
+
+  (C) Display1
+   |- paintObjects(Graphics)
+   |   |- method-call(...
+   |	   |->> advised by
+   |		   |- Coordinator.before():...
+   |		   |- Coordinator.after():...
+   |- (A) SpaceObjectPainting
+	   |- afterReturning(Pilot)
+	       |->>  advises
+	    	   |- Game: ...
+	    	   |- Game: ...
+	    	   |- Game: ...
+	    	   |- Robot: ...
+  							(XREF_VIEW_37)
+
+- Bring up the View Menu from the drop down button in the Cross References toolbar
+- Select the 'Filters...' button
+- In the presented dialog, uncheck the 'declared on' checkbox and click OK
+- The Cross References View should now have a tree like the one checked in (XREF_VIEW_42).
+  							(XREF_VIEW_38)
+
+Test for Bug 107719 - Filters on XRef View clear view when focus is lost from the editor part
+---------------------------------------------------------------------------------------------
+
+- Open the Cross References View, ('Window > Show View > Other... > AspectJ > Cross References').
+- Open the Spacewar Example project
+- If it is not already, activate the demo build configuration
+- Open the Display1.aj file from within the spacewar package, in an editor window
+- Navigate to line 85, (some after advice)
+- If necessary, in the Cross References View, deselect the 'Show the cross references for the entire file'
+  button on the toolbar
+- The Cross References View should now have a tree like this:
+
+   |- afterReturning(Pilot)
+       |->> advises
+		   |- Game: ...
+		   |- Game: ...
+		   |- Game: ...
+		   |- Robot: ...
+  							(XREF_VIEW_39)
+
+- Click into the Cross References view so that the part tab becomes highlighted
+- Being careful not to click out of the Cross References View, bring up the View Menu
+  from the drop down button in the Cross References toolbar and select the 'Filters...' button
+- In the presented dialog, check the 'advises' checkbox and click OK
+- The Cross References View should now have a tree like this:
+
+   |- afterReturning(Pilot)
+   							(XREF_VIEW_40)
+   							
+Test for bug 107589 - XRef slowdown after a build
+-------------------------------------------------
+
+- ensure that the Cross References view is open ('Window > Show View > Other... > AspectJ > Cross References')
+- make sure there are no open editors
+- create Bean and Spacewar examples
+- switch to visualisation perspective, click around the projects
+- shutdown the workspace and restart
+- switch back to java perspective, open an aspect in the editor
+- click Bean example in the package explorer, and then press the build button.
+- the build which happens should be smooth and you should not see 
+  the progress bar of the build process dialog get to 100% and
+  remain there locked for about 10 seconds. 
+  							(XREF_VIEW_41)
+- The xref view is should not contain the name of the project
+							(XREF_VIEW_42)							

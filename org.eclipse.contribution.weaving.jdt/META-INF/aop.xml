@@ -1,0 +1,18 @@
+<aspectj>
+<aspects>
+<aspect name="org.eclipse.contribution.jdt.IsWovenTester"/>
+<aspect name="org.eclipse.contribution.jdt.sourceprovider.SourceTransformerAspect"/>
+<aspect name="org.eclipse.contribution.jdt.cuprovider.CompilationUnitProviderAspect"/>
+<aspect name="org.eclipse.contribution.jdt.imagedescriptor.ImageDescriptorSelectorAspect"/>
+<aspect name="org.eclipse.contribution.jdt.itdawareness.ITDAwarenessAspect"/>
+<aspect name="org.eclipse.contribution.jdt.itdawareness.MatchLocationManipulatorAspect"/>
+<aspect name="org.eclipse.contribution.jdt.itdawareness.ExtraGettersSettersAspect"/>
+<aspect name="org.eclipse.contribution.jdt.refactoring.RenameJavaElementActionAspect"/>
+<aspect name="org.eclipse.contribution.jdt.refactoring.RefactoringHooksAspect"/>
+<aspect name="org.eclipse.contribution.jdt.itdawareness.JUnit4TestFinderAspect"/>
+<aspect name="org.eclipse.contribution.jdt.itdawareness.SearchHooksAspect"/>
+<aspect name="org.eclipse.contribution.jdt.debug.DebugHooksAspect"/>
+</aspects>
+<weaver options="-Xlint:ignore" />
+</aspectj>
+

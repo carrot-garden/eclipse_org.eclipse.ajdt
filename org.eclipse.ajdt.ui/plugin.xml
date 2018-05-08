@@ -1,0 +1,2031 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+
+    
+<!-- Define AspectJ Project nature -->
+   <extension
+         id="ajnature"
+         name="%ajNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.ajdt.internal.ui.AspectJProjectNature">
+         </run>
+      </runtime>
+      <requires-nature id="org.eclipse.jdt.core.javanature"/>
+   </extension>
+   
+      <extension
+         point="org.eclipse.ui.ide.projectNatureImages">
+      <image
+            icon="icons/ovr/aj_ovr.gif"
+            natureId="org.eclipse.ajdt.ui.ajnature"
+            id="org.eclipse.ajdt.ui.aspectJProjectNatureImage">
+      </image>
+   </extension>
+   
+<!-- Define popup menus -->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="iprojectcontributions">
+         <menu
+               label="%org.eclipse.ajdt.ui.tools"
+               id="org.eclipse.ajdt.ui.project.tools">
+            <separator
+               name="group0">
+            </separator>
+         </menu>     
+         <visibility>
+         	<and>
+	         	<objectState name="nature" value="org.eclipse.jdt.core.javanature"/>
+	         	<not>
+		         	<objectState name="nature" value="org.eclipse.ajdt.ui.ajnature"/>
+		        </not>
+		        <objectState name="open" value="true"/>
+		    </and>
+         </visibility>
+         <!-- /* AJDT 1.7 */ change menu location -->
+         <action
+               label="%convertToAJP"
+               class="org.eclipse.ajdt.internal.ui.actions.AddAJNatureAction"
+               menubarPath="org.eclipse.ui.projectConfigure/additions"
+               id="addajnatureaction">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="iprojectcontributions">
+         <visibility>
+         	<objectState name="nature" value="org.eclipse.ajdt.ui.ajnature"/>
+         </visibility>
+         <action
+               label="%removeAJNature"
+               class="org.eclipse.ajdt.internal.ui.actions.RemoveAJNatureAction"
+               menubarPath="org.eclipse.ajdt.ui.feature.tools/group2"
+               id="removeajnatureaction">
+         </action>
+      </objectContribution>   
+ 
+	<!--
+	Restrict selection to be a project with an AspectJ nature.
+	Specifying an "IJavaProject" objectClass would mean that
+	this contribution would become unavailable for web and EJB
+	projects in IBM Rational 6.x tools.
+	--> 
+     <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="iprojectcontributions">
+        <menu
+               label="%org.eclipse.ajdt.ui.tools"
+               id="org.eclipse.ajdt.ui.feature.tools">
+            <separator
+                  name="group0">
+            </separator>
+            <separator
+                  name="group1">
+            </separator>
+            <separator
+                  name="group2">
+            </separator>
+         </menu>
+         <filter
+               name="nature"
+               value="org.eclipse.ajdt.ui.ajnature">
+         </filter>
+         <action
+               label="%convertExt"
+               class="org.eclipse.ajdt.internal.ui.refactoring.RenameFileExtensionsAction"
+               menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+               id="renamefileextensionsaction"
+               enablesFor="1">
+         </action>
+      </objectContribution>
+
+      <objectContribution
+            objectClass="org.eclipse.jdt.core.ICompilationUnit"
+            adaptable="true"
+            id="ifilecontributions"
+            nameFilter="*.java">
+         <menu
+               label="%org.eclipse.ajdt.ui.tools"
+               id="org.eclipse.ajdt.ui.feature.tools">
+            <separator
+                  name="group0">
+            </separator>
+            <separator
+                  name="group1">
+            </separator>
+            <separator
+                  name="group2">
+            </separator>
+         </menu>
+          <visibility>
+             <objectState 
+	            name="projectNature" 
+	            value="org.eclipse.ajdt.ui.ajnature"/>
+	      </visibility>
+          <action
+               label="%convertExtToAJ"
+               class="org.eclipse.ajdt.internal.ui.refactoring.RenameToAJAction"
+               menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+               id="renametoajaction">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.ajdt.core.javaelements.AJCompilationUnit"
+            adaptable="true"
+            id="ifilecontributions"> 
+             <menu
+               label="%org.eclipse.ajdt.ui.tools"
+               id="org.eclipse.ajdt.ui.feature.tools">
+            <separator
+                  name="group0">
+            </separator>
+            <separator
+                  name="group1">
+            </separator>
+            <separator
+                  name="group2">
+            </separator>
+         </menu>
+          <action
+               label="%convertExtToJava"
+               class="org.eclipse.ajdt.internal.ui.refactoring.RenameToJavaAction"
+               menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+               id="renametojavaaction">
+         </action>
+      </objectContribution>
+      
+	
+	<!-- Adding our own rename action for .aj files -->
+	  <objectContribution
+           objectClass="org.eclipse.ajdt.core.javaelements.AJCompilationUnit"
+           adaptable="true"
+           id="ajfileContribution"> 
+         <action
+             label="%renameAJFiles"
+             class="org.eclipse.ajdt.internal.ui.actions.RenameAJFileAction"
+             menubarPath="org.eclipse.jdt.ui.refactoring.menu"
+             id="renameAJFile">
+         </action>
+      </objectContribution>
+      
+      <!-- Build configuration actions -->
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.ajproperties"
+            id="ajproperties">
+         <visibility>
+            <objectState name="projectNature" value="org.eclipse.ajdt.ui.ajnature"/>
+         </visibility>
+     	 <menu
+               label="%org.eclipse.ajdt.ui.tools"
+               id="org.eclipse.ajdt.ui.feature.tools">
+            <separator
+                  name="group0">
+            </separator>
+            <separator
+                  name="group1">
+            </separator>
+           <separator
+                  name="group2">
+            </separator>
+         </menu>
+         <action
+               label="%activateConfig"
+               class="org.eclipse.ajdt.internal.buildpath.ApplyBCAction"
+               menubarPath="org.eclipse.ajdt.ui.feature.tools/group0"
+               id="ajpropertiespopup">
+         </action>
+      </objectContribution>
+ 
+       <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+             adaptable="true"
+            id="ajproperties2">
+         <visibility>
+         	<objectState name="nature" value="org.eclipse.ajdt.ui.ajnature"/>
+         </visibility>
+         <menu
+            label="%org.eclipse.ajdt.ui.tools"
+            id="org.eclipse.ajdt.ui.feature.tools">
+	         <separator
+	            name="group0">
+	         </separator>      
+         </menu>  
+         <action
+             label="%saveConfig"
+             class="org.eclipse.ajdt.internal.buildpath.SaveBCAction"
+             menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+             id="ajpropertiespopup2">
+         </action>      
+      </objectContribution>
+      
+
+   <!--Our Toggle breakpoint action and JDT's other breakpoint actions-->
+     <viewerContribution
+            targetID="#AJCompilationUnitRulerContext"
+            id="org.eclipse.ajdt.debug.ui.CompilationUnitRulerPopupActions">
+         <action
+               label="%JavaBreakpointProperties.label"
+               helpContextId="breakpoint_properties_action_context"
+               class="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
+               menubarPath="group.properties"
+               id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
+         </action>
+         <action
+               label="%EnableBreakpoint.label"
+               helpContextId="enable_disable_breakpoint_action_context"
+               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.jdt.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+         </action>
+         <action
+               helpContextId="manage_breakpoint_action_context"
+               label="%manageBreakpointActionInRulerContextMenu"
+               class="org.eclipse.ajdt.internal.ui.editor.AspectJBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.ajdt.internal.ui.editor.AspectJBreakpointRulerActionDelegate">
+         </action>
+     </viewerContribution>
+     
+ <!-- Also contributing JDT UI's other ruler context menu actions to our context menu -->    
+      <viewerContribution
+            targetID="#AJCompilationUnitRulerContext"
+            id="org.eclipse.jdt.ui.CompilationUnitEditorPopupActions">
+         <action
+               label="%AddTask.label"
+               helpContextId="org.eclipse.ui.AddTask_action_context"
+               tooltip="%AddTask.tooltip"
+               class="org.eclipse.ui.texteditor.TaskRulerAction"
+               menubarPath="add"
+               id="org.eclipse.ui.texteditor.TaskRulerAction">
+         </action>
+         <action
+               label="%AddBookmark.label"
+               helpContextId="org.eclipse.ui.bookmark_action_context"
+               tooltip="%AddBookmark.tooltip"
+               class="org.eclipse.ui.texteditor.BookmarkRulerAction"
+               menubarPath="add"
+               id="org.eclipse.ui.texteditor.BookmarkRulerAction">
+         </action>
+      </viewerContribution>
+   </extension>
+
+<!-- Define AspectJ Builder -->
+<!-- Note: this is now the *OLD* builder, and is only here to migrate project settings
+     to the new builder. The real builder is now defined in the org.eclipse.ajdt.core
+     plugin, with id org.eclipse.ajdt.core.ajbuilder -->
+   <extension
+         id="ajbuilder"
+         name="%ajBuilder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.ajdt.internal.builder.Builder">
+         </run>
+      </builder>
+   </extension>
+
+<!--  Define AspectJ Preferences Page -->
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%ajCompilerOptionsPrefName"
+            class="org.eclipse.ajdt.internal.ui.preferences.AJCompilerPreferencePage"
+            id="org.eclipse.ajdt.ui.preferences.AJCompilerPreferencePage">
+      </page>      
+      
+   </extension>
+
+<!-- Define filters to prevent .ajsym files being displayed (navigator and packages views) -->
+   <extension
+         id="resourceFilters"
+         name="%ajsymFilter"
+         point="org.eclipse.ui.ide.resourceFilters">
+      <filter
+            selected="true"
+            pattern="*.ajsym">
+      </filter>
+   </extension>
+   <extension
+         id="javaelementfilters"
+         point="org.eclipse.jdt.ui.javaElementFilters">
+      <filter
+            enabled="true"
+            pattern="*.ajsym"
+            name="%ajsymFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.jdt.ui.PackageExplorer"
+            enabled="true"
+            class="org.eclipse.ajdt.internal.ui.lazystart.CompilationUnitFilter"
+            description="%ajFileFilterDesc"
+            name="%ajFileFilter"
+            id="org.eclipse.ajdt.javamodel.CompilationUnitFilter"/>
+      <filter
+            id="org.eclipse.ajdt.ui.editor.outline.PointcutFilter"
+            name="%pointcutFilter.name"
+            description="%pointcutFilter.description"
+            class="org.eclipse.ajdt.internal.ui.editor.outline.PointcutFilter"
+            enabled="false"/>      
+      <filter
+            id="org.eclipse.ajdt.ui.editor.outline.AdviceFilter"
+            name="%adviceFilter.name"
+            description="%adviceFilter.description"
+            class="org.eclipse.ajdt.internal.ui.editor.outline.AdviceFilter"
+            enabled="false"/>      
+      <filter
+            id="org.eclipse.ajdt.ui.editor.outline.IntroductionFilter"
+            name="%introductionFilter.name"
+            description="%introductionFilter.description"
+            class="org.eclipse.ajdt.internal.ui.editor.outline.IntroductionFilter"
+            enabled="false"/>      
+      <filter
+            id="org.eclipse.ajdt.ui.editor.outline.DeclarationFilter"
+            name="%declarationFilter.name"
+            description="%declarationFilter.description"
+            class="org.eclipse.ajdt.internal.ui.editor.outline.DeclarationFilter"
+            enabled="false"/>
+   </extension>
+
+<!-- Define editors used by AspectJ -->
+   <extension
+         id="editors"
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%ajEditor"
+            icon="icons/structure/ajcu_obj.gif"
+            extensions="aj"
+            default="true"
+            contributorClass="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
+            class="org.eclipse.ajdt.internal.ui.editor.AspectJEditor"
+            id="org.eclipse.ajdt.internal.ui.editor.CompilationUnitEditor">
+            <contentTypeBinding contentTypeId="ajSource"/> 
+      </editor>
+      <!-- also register the editor for .java files, but not as the default -->
+      <editor
+            name="%ajEditor"
+            icon="icons/structure/ajcu_obj.gif"
+            default="false"
+            extensions="java"
+            contributorClass="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
+            class="org.eclipse.ajdt.internal.ui.editor.AspectJEditor"
+            id="org.eclipse.ajdt.internal.ui.editor.CompilationUnitEditor">
+       </editor>
+<!-- do we need to duplicate these next 3 editors from JDT??? org.eclipse.jdt.ui.ClassFileEditor -->
+	  <!--editor
+            name="Class File Editor"
+            icon="icons/jdt/classf_obj.gif"
+            extensions="class"
+            contributorClass="org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditorActionContributor"
+            class="org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor"
+            id="org.eclipse.jdt.ui.ClassFileEditor">
+      </editor-->
+      <!--
+      <editor
+            name="%propertiesFileEditor"
+            icon="icons/jdt/file_obj.gif"
+            extensions="properties"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="org.eclipse.ui.editors.text.TextEditor"
+            id="org.eclipse.jdt.ui.DefaultTextEditor">
+      </editor>
+      <editor
+            name="%jarDescriptionEditor"
+            icon="icons/jdt/jar_desc_obj.gif"
+            extensions="jardesc"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="org.eclipse.ui.editors.text.TextEditor"
+            id="org.eclipse.jdt.ui.JARDescEditor">
+      </editor>
+      -->
+   </extension>
+
+<!-- Define the relevant wizards for AspectJ -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="%AspectJ"
+            id="org.eclipse.ajdt.wizards">
+      </category>
+      
+	  <!-- Define the AspectJ Project creation wizard -->
+      <wizard
+            name="%ajProject"
+            icon="icons/structure/newajprj_wiz.gif"
+            category="org.eclipse.ajdt.wizards"
+            class="org.eclipse.ajdt.internal.ui.wizards.AspectJProjectWizard"
+            preferredPerspectives="org.eclipse.jdt.ui.JavaPerspective,org.eclipse.jdt.ui.JavaBrowsingPerspective,org.eclipse.jdt.ui.JavaHierarchyPerspective"
+            project="true"
+            finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
+            id="ajprojectwizard">
+         <description>
+            %ajProjectWizard.description
+         </description>
+      </wizard>
+      
+      <!-- Define the AspectJ Aspect creation wizard -->
+      <wizard
+            name="%ajAspect"
+            icon="icons/structure/new_aspect_wizard.gif"
+            category="org.eclipse.ajdt.wizards"
+            finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
+            id="ajaspectwizard">
+         <class class="org.eclipse.ajdt.internal.ui.wizards.NewAspectCreationWizard">
+            <parameter
+                name="javatype"
+                value="true">
+            </parameter>
+         </class>
+         <description>
+            %ajAspectWizard.description
+         </description>
+      </wizard>
+
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            name="%ajJarExportWizard"
+            icon="icons/actions/exportjar_wiz.gif"
+            class="org.eclipse.ajdt.internal.ui.wizards.exports.AJJarPackageWizard"
+            category="org.eclipse.jdt.ui.Java"
+            id="org.eclipse.ajdt.internal.ui.wizards.exports.AJJarPackageWizard">
+         <description>
+            %ajJarExportWizard.description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
+   </extension>
+
+
+<!-- Actions contributed by AspectJ to the Java perspective -->
+   <extension
+         point="org.eclipse.ui.actionSets">
+       <!--
+       this action set is deprecated and not used.
+       It can be removed when the following is fixed:
+       https://bugs.eclipse.org/bugs/show_bug.cgi?id=405296
+       -->
+       <actionSet
+            label="AspectJ Navigation (deprecated)"
+            visible="false"
+             id="ajnavigation">
+       </actionSet>
+       <actionSet
+            label="%ajelementCreation"
+            visible="false"
+            id="ajelementCreation">
+         <action
+               label="%OpenAJProjectWizardAction.label"
+               icon="icons/structure/newajprj_wiz.gif"
+               tooltip="%OpenAJProjectWizardAction.tooltip"
+               class="org.eclipse.ajdt.internal.ui.wizards.OpenAJProjectWizardAction"
+               toolbarPath="org.eclipse.jdt.ui.JavaElementCreationActionSet/JavaWizards"
+               id="openajprojectwizard">
+         </action>
+      </actionSet>
+      <actionSet
+            label="AspectJ Refactorings"
+            visible="true"
+            id="ajrefactoring"
+            description="Action set containing refactorings for AspectJ"> 
+         <menu
+               id="org.eclipse.ajdt.refactoring.menu"
+               label="AspectJ Refactorings"
+               path="edit">
+            <separator name="pushIn"/>
+         </menu>
+        </actionSet>
+   </extension>
+
+ <!-- commands and their bindings
+NOTE:
+M1 = CTRL/COMMAND 
+M2 = SHIFT 
+M3 = ALT 
+M4 = Platform-specific fourth key
+-->
+   <extension
+         point="org.eclipse.ui.commands">
+<!-- launch shortcuts -->
+      <command
+            name="%AspectJApplicationShortcut.description.debug"
+            description="%AspectJApplicationShortcut.description.debug"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.ajdt.launching.runShortcut.debug">
+      </command>
+      <command
+            name="%AspectJApplicationShortcut.description.run"
+            description="%AspectJApplicationShortcut.description.run"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.ajdt.launching.runShortcut.run">
+      </command>
+   </extension>
+
+   <extension point="org.eclipse.ui.bindings">
+      <key
+            sequence="M3+M2+D C"
+            commandId="org.eclipse.ajdt.launching.runShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            sequence="M3+M2+X C"
+            commandId="org.eclipse.ajdt.launching.runShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   </extension> 
+      
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+   		<perspectiveExtension 
+			targetID="org.eclipse.jdt.ui.JavaPerspective">
+					<actionSet id="ajelementCreation"/>
+					<actionSet id="ajrefactoring"/>
+					<newWizardShortcut id="ajaspectwizard"/>					
+					<newWizardShortcut id="ajprojectwizard"/>
+					<perspectiveShortcut
+                        id="org.eclipse.ajdt.ui.visualiser.AspectVisualizationPerspective"/>					
+    	</perspectiveExtension>
+    	<perspectiveExtension 
+			targetID="org.eclipse.ajdt.ui.visualiser.AspectVisualizationPerspective">
+					<actionSet id="ajelementCreation"/>
+					<newWizardShortcut id="ajaspectwizard"/>
+					<newWizardShortcut id="ajprojectwizard"/>					
+					<perspectiveShortcut
+                        id="org.eclipse.jdt.ui.JavaPerspective"/>				
+    	</perspectiveExtension>
+		<perspectiveExtension 
+			targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+					<actionSet id="ajelementCreation"/>
+					<actionSet id="ajrefactoring"/>					
+					<newWizardShortcut id="ajaspectwizard"/>
+					<newWizardShortcut id="ajprojectwizard"/>					
+					<perspectiveShortcut
+                        id="org.eclipse.ajdt.ui.visualiser.AspectVisualizationPerspective"/>					
+		</perspectiveExtension>
+		<perspectiveExtension 
+			targetID="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+					<actionSet id="ajelementCreation"/>
+					<actionSet id="ajrefactoring"/>					
+					<newWizardShortcut id="ajaspectwizard"/>
+					<newWizardShortcut id="ajprojectwizard"/>					
+					<perspectiveShortcut
+                        id="org.eclipse.ajdt.ui.visualiser.AspectVisualizationPerspective"/>					
+		</perspectiveExtension>
+		<perspectiveExtension 
+			targetID="org.eclipse.pde.ui.PDEPerspective">
+					<actionSet id="ajelementCreation"/>
+					<actionSet id="ajrefactoring"/>
+		</perspectiveExtension>
+		
+		<!--
+		Below two perspective extensions added for IBM Rational 6.x tooling.
+		-->    	
+    	<perspectiveExtension 
+ 			  targetID="org.eclipse.jst.j2ee.J2EEPerspective">
+					<actionSet id="ajelementCreation"/>
+					<newWizardShortcut id="ajaspectwizard"/>
+					<perspectiveShortcut
+                        id="org.eclipse.ajdt.ui.visualiser.AspectVisualizationPerspective"/>				
+    	</perspectiveExtension>
+    	<perspectiveExtension 
+			targetID="com.ibm.etools.webtools.webperspective.WebToolsPerspective">
+					<actionSet id="ajelementCreation"/>
+					<newWizardShortcut id="ajaspectwizard"/>
+					<perspectiveShortcut
+                        id="org.eclipse.ajdt.ui.visualiser.AspectVisualizationPerspective"/>				
+    	</perspectiveExtension>
+
+   </extension>
+
+<!-- Project properties -->
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            name="%aspectj"
+            class="org.eclipse.ajdt.internal.ui.AspectJProjectPropertiesPage"
+            id="org.eclipse.ajdt.ui.ProjectPage">
+         <enabledWhen>
+		     <adapt type="org.eclipse.core.resources.IProject">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.ajdt.ui.ajnature"/>
+		     </adapt>         
+         </enabledWhen>
+      </page>
+      <page
+            class="org.eclipse.ajdt.internal.ui.preferences.AJCompilerPreferencePage"
+            name="%aspectJCompiler"
+            id="org.eclipse.ajdt.ui.propertyPages.AJCompilerPreferencePage">
+         <enabledWhen>
+		     <adapt type="org.eclipse.core.resources.IProject">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.ajdt.ui.ajnature"/>
+		     </adapt>         
+         </enabledWhen>
+      </page>
+      <page
+            category="org.eclipse.ajdt.ui.ProjectPage"
+            class="org.eclipse.ajdt.internal.ui.preferences.AopXmlPreferencePage"
+            id="org.eclipse.ajdt.ui.AOPXML"
+            name="aop.xml management">
+         <enabledWhen>
+		     <adapt type="org.eclipse.core.resources.IProject">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.ajdt.ui.ajnature"/>
+		     </adapt>         
+         </enabledWhen>
+      </page>  
+   </extension>
+
+<!-- Event trace view -->
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%AspectJ"
+            id="org.eclipse.ajdt.ui.cat">
+      </category>
+      <view
+            name="%eventTraceView"
+            icon="icons/actions/perspective.gif"
+            category="org.eclipse.ajdt.ui.cat"
+            class="org.eclipse.ajdt.internal.ui.tracing.EventTraceView"
+            id="org.eclipse.ajdt.ui.EventTraceView">
+      </view>
+   </extension>
+
+<!-- our implementation of ManageBreakpointRulerAction gets called.  -->
+<!-- This overrides an editor action supplied by the JDT and ensures -->
+<!-- our implementation of ManageBreakpointRulerAction gets called.  -->
+<!-- Debugging -->
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="org.eclipse.ajdt.internal.ui.editor.CompilationUnitEditor"
+            id="org.eclipse.ajdt.ui.AJEditor.BreakpointRulerActions">
+         <action
+               label="%AJEditorActionsLabel"
+               class="org.eclipse.ajdt.internal.ui.editor.AspectJBreakpointRulerActionDelegate"
+               actionID="RulerDoubleClick"
+               id="org.eclipse.ajdt.ui.actions.ManageBreakpointRulerAction">
+         </action>
+      </editorContribution>
+      <editorContribution
+            targetID="org.eclipse.ajdt.internal.ui.editor.CompilationUnitEditor"
+            id="org.eclipse.ajdt.ui.AJEditor.AdviceRulerActions">
+         <action
+               label="%AJEditorActionsLabel"
+               class="org.eclipse.ajdt.internal.ui.editor.AdviceActionDelegate"
+               id="org.eclipse.ajdt.ui.actions.AdviceActionDelegate">
+         </action>
+      </editorContribution>
+      <editorContribution
+            targetID="org.eclipse.jdt.ui.CompilationUnitEditor"
+            id="org.eclipse.ajdt.ui.AJEditor.AdviceRulerActions">
+         <action
+               label="%AJEditorActionsLabel"
+               class="org.eclipse.ajdt.internal.ui.editor.AdviceActionDelegate"
+               id="org.eclipse.ajdt.ui.actions.AdviceActionDelegate">
+         </action>
+      </editorContribution>
+      <editorContribution
+            targetID="org.eclipse.ajdt.internal.ui.editor.CompilationUnitEditor"
+            id="org.eclipse.ui.texteditor.ruler.actions">
+         <action
+               label="%AJEditorActionsLabel"
+               class="org.eclipse.jdt.internal.ui.javaeditor.JavaSelectRulerAction"
+               actionID="RulerClick"
+               id="org.eclipse.jdt.internal.ui.javaeditor.JavaSelectRulerAction"/>
+      </editorContribution>
+   </extension>
+
+   
+<!-- Marker for the left hand ruler showing where advice applies -->
+   <extension
+         id="advicemarker"
+         name="Advice Marker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="sourceLocationOfAdvice">
+      </attribute>
+   </extension>
+   
+<!-- Markers for a line that is both source and target -->
+
+   <extension
+   	      id="sourceandtargetmarker"
+   	      name="%sourceAndTargetMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.advicemarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>   
+   <extension
+   	      id="dynamicsourceandtargetmarker"
+   	      name="%dynamicSourceAndTargetMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.advicemarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension> 
+   
+<!-- Markers for different types of advice -->      
+   <extension
+   	      id="beforeadvicemarker"
+   	      name="%beforeAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.advicemarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+   	      id="afteradvicemarker"
+   	      name="After Advice Marker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.advicemarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+   	      id="aroundadvicemarker"
+   	      name="%aroundAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.advicemarker">
+      </super>
+     <persistent
+            value="true">
+      </persistent>
+   </extension>
+<!-- Markers to show the source of advice -->   
+    <extension
+   	      id="sourceadvicemarker"
+   	      name="%sourceOfAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+     <persistent
+            value="true">
+      </persistent>
+            <attribute
+            name="sourceLocationOfAdvice">
+      </attribute>     
+   </extension>
+   <extension
+   	      id="sourcearoundadvicemarker"
+   	      name="%sourceOfAroundAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.sourceadvicemarker">
+      </super>
+     <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+   	      id="sourcebeforeadvicemarker"
+   	      name="%sourceOfBeforeAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.sourceadvicemarker">
+      </super>
+     <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+   	      id="sourceafteradvicemarker"
+   	      name="%sourceOfAfterAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.sourceadvicemarker">
+      </super>
+     <persistent
+            value="true">
+      </persistent>
+   </extension>
+
+<!-- Custom advice marker -->
+   <extension
+         id="customadvicemarker"
+         name="Custom Advice Marker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="sourceLocationOfAdvice">
+      </attribute>
+   </extension>
+
+   <extension
+         id="changedadvicemarker"
+         name="%changedAdvice"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="false">
+      </persistent>
+      <attribute
+            name="%changedAdvice">
+      </attribute>
+   </extension>
+
+<!-- AJDT Problem markers -->
+   <extension
+         id="problemmarker"
+         name="%aspectjproblem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.jdt.core.problem">
+      </super>
+   </extension>
+
+
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationType="org.eclipse.ajdt.ui.error"
+            textPreferenceKey="ajdtErrorIndication"
+            presentationLayer="6"
+            highlightPreferenceValue="false"
+            showInNextPrevDropdownToolbarAction="true"
+            textPreferenceValue="true"
+            isGoToPreviousNavigationTargetKey="isAJDTErrorGoToPreviousNavigationTarget"
+            label="%ajdtErrors"
+            colorPreferenceKey="ajdtErrorIndicationColor"
+            showInNextPrevDropdownToolbarActionKey="showAJDTErrorInNextPrevDropdownToolbarAction"
+            icon="icons/markers/error.gif"
+            isGoToNextNavigationTargetKey="isAJDTErrorGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="true"
+            overviewRulerPreferenceKey="ajdtErrorIndicationInOverviewRuler"
+            verticalRulerPreferenceValue="true"
+            highlightPreferenceKey="ajdtErrorIndicationHighlighting"
+            isGoToPreviousNavigationTarget="true"
+            verticalRulerPreferenceKey="ajdtErrorIndicationInVerticalRuler"
+            contributesToHeader="true"
+            colorPreferenceValue="255,0,128"
+            overviewRulerPreferenceValue="true">
+      </specification>
+      <specification
+            annotationType="org.eclipse.ajdt.ui.warning"
+            textPreferenceKey="ajdtWarningIndication"
+            presentationLayer="5"
+            highlightPreferenceValue="false"
+            showInNextPrevDropdownToolbarAction="true"
+            textPreferenceValue="true"
+            isGoToPreviousNavigationTargetKey="isAJDTWarningGoToPreviousNavigationTarget"
+            label="%ajdtWarnings"
+            colorPreferenceKey="ajdtWarningIndicationColor"
+            showInNextPrevDropdownToolbarActionKey="showAJDTWarningInNextPrevDropdownToolbarAction"
+            icon="icons/markers/warning.gif"
+            isGoToNextNavigationTargetKey="isAJDTWarningGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="true"
+            overviewRulerPreferenceKey="ajdtWarningIndicationInOverviewRuler"
+            verticalRulerPreferenceValue="true"
+            highlightPreferenceKey="ajdtWarningIndicationHighlighting"
+            isGoToPreviousNavigationTarget="true"
+            verticalRulerPreferenceKey="ajdtWarningIndicationInVerticalRuler"
+            contributesToHeader="true"
+            colorPreferenceValue="244,200,45"
+            overviewRulerPreferenceValue="true">
+      </specification>
+    </extension>
+   
+   <extension
+      point="org.eclipse.ui.editors.annotationTypes">
+      <type
+         name="org.eclipse.ajdt.ui.error"
+         markerType="org.eclipse.ajdt.ui.problemmarker"
+         markerSeverity="2">
+      </type>
+      <type
+         name="org.eclipse.ajdt.ui.warning"
+         markerType="org.eclipse.ajdt.ui.problemmarker"
+         markerSeverity="1">
+      </type>
+    </extension>
+
+<!-- Dynamic Advice Markers -->
+   <extension
+		  id="dynamicadvicemarker"
+          name="%dynamicAdviceMarker"
+          point="org.eclipse.core.resources.markers">
+          <super type="org.eclipse.ajdt.ui.advicemarker"/>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+   	      id="dynamicbeforeadvicemarker"
+   	      name="%dynamicBeforeAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.advicemarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+   	      id="dynamicafteradvicemarker"
+   	      name="%dynamicAfterAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.advicemarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+    <extension
+   	      id="dynamicaroundadvicemarker"
+   	      name="%dynamicAroundAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.advicemarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+	</extension>
+
+   <extension
+		  id="sourcedynamicadvicemarker"
+          name="%sourceDynamicAdviceMarker"
+          point="org.eclipse.core.resources.markers">
+          <super type="org.eclipse.ajdt.ui.sourceadvicemarker"/>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+   	      id="sourcedynamicbeforeadvicemarker"
+   	      name="%sourceDynamicBeforeAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.sourceadvicemarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+   	      id="sourcedynamicafteradvicemarker"
+   	      name="%sourceDynamicAfterAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.sourceadvicemarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+    <extension
+   	      id="sourcedynamicaroundadvicemarker"
+   	      name="%sourceDynamicAroundAdviceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.sourceadvicemarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+	</extension>
+
+	
+ <!-- Aspect Declaration Markers -->
+ 
+     <extension
+   	      id="declarationmarker"
+   	      name="%declarationMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="sourceLocationOfAdvice">
+      </attribute>
+    </extension>  
+    <extension
+   	      id="itdmarker"
+   	      name="%intertypeDeclarationMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.declarationmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+	</extension>
+
+    <extension
+   	      id="sourceitdmarker"
+   	      name="%intertypeDeclarationSourceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.declarationmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+	</extension>
+    <extension
+   	      id="annotationmarker"
+   	      name="%annotationDeclarationMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.declarationmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+	</extension>
+    <extension
+   	      id="sourceannotationmarker"
+   	      name="%annotationDeclarationSourceMarker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.ajdt.ui.declarationmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+	</extension>
+
+
+ 
+ <!-- Marker declarations -->   
+     	<extension point="org.eclipse.ui.editors.annotationTypes">
+      <type
+        	name="org.eclipse.ajdt.advice"
+			markerType="org.eclipse.ajdt.ui.advicemarker">
+      </type>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.sourceandtargetmarker"
+            name="org.eclipse.ajdt.sourceAndTarget"/>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.dynamicsourceandtargetmarker"
+            name="org.eclipse.ajdt.dynamicSourceAndTarget"/>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.dynamicadvicemarker"
+            name="org.eclipse.ajdt.dynamicAdvice"/>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.afteradvicemarker"
+            name="org.eclipse.ajdt.afterAdvice"/>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.beforeadvicemarker"
+            name="org.eclipse.ajdt.beforeAdvice"/>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.aroundadvicemarker"
+            name="org.eclipse.ajdt.aroundAdvice"/>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.sourceadvicemarker"
+            name="org.eclipse.ajdt.sourceAdvice"/>            
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.sourcedynamicadvicemarker"
+            name="org.eclipse.ajdt.sourceDynamicAdvice"/>
+      <type
+            super="org.eclipse.ajdt.sourceAdvice"
+            markerType="org.eclipse.ajdt.ui.sourcebeforeadvicemarker"
+            name="org.eclipse.ajdt.sourceBeforeAdvice"/>            
+      <type
+            super="org.eclipse.ajdt.sourceAdvice"
+            markerType="org.eclipse.ajdt.ui.sourceafteradvicemarker"
+            name="org.eclipse.ajdt.sourceAfterAdvice"/>            
+      <type
+            super="org.eclipse.ajdt.sourceAdvice"
+            markerType="org.eclipse.ajdt.ui.sourcearoundadvicemarker"
+            name="org.eclipse.ajdt.sourceAroundAdvice"/>            
+	  <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.dynamicafteradvicemarker"
+            name="org.eclipse.ajdt.dynamicAfterAdvice"/>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.dynamicbeforeadvicemarker"
+            name="org.eclipse.ajdt.dynamicBeforeAdvice"/>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.dynamicaroundadvicemarker"
+            name="org.eclipse.ajdt.dynamicAroundAdvice"/>            
+	    <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.sourcedynamicafteradvicemarker"
+            name="org.eclipse.ajdt.sourceDynamicAfterAdvice"/>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.sourcedynamicbeforeadvicemarker"
+            name="org.eclipse.ajdt.sourceDynamicBeforeAdvice"/>
+      <type
+            super="org.eclipse.ajdt.advice"
+            markerType="org.eclipse.ajdt.ui.sourcedynamicaroundadvicemarker"
+            name="org.eclipse.ajdt.sourceDynamicAroundAdvice"/>
+	    <type
+            markerType="org.eclipse.ajdt.ui.declarationmarker"
+            name="org.eclipse.ajdt.aspectDeclaration"/>
+	    <type
+   		 	super="org.eclipse.ajdt.aspectDeclaration"
+            markerType="org.eclipse.ajdt.ui.itdmarker"
+            name="org.eclipse.ajdt.intertypeDeclaration"/>
+	    <type
+   		 	super="org.eclipse.ajdt.aspectDeclaration"
+            markerType="org.eclipse.ajdt.ui.annotationmarker"
+            name="org.eclipse.ajdt.annotationDeclaration"/>
+	  <type
+   		 	super="org.eclipse.ajdt.aspectDeclaration"
+            markerType="org.eclipse.ajdt.ui.sourceitdmarker"
+            name="org.eclipse.ajdt.sourceIntertypeDeclaration"/>
+	  <type
+   		 	super="org.eclipse.ajdt.aspectDeclaration"
+            markerType="org.eclipse.ajdt.ui.sourceannotationmarker"
+            name="org.eclipse.ajdt.sourceAnnotationDeclaration"/>
+      <type
+        	name="org.eclipse.ajdt.customAdvice"
+			markerType="org.eclipse.ajdt.ui.customadvicemarker">
+      </type>
+      <type
+        	name="org.eclipse.ajdt.changedAdvice"
+			markerType="org.eclipse.ajdt.ui.changedadvicemarker">
+      </type>
+	</extension>
+
+
+	
+	<extension
+	     point="org.eclipse.ui.editors.markerAnnotationSpecification">
+	     <specification
+      		annotationType="org.eclipse.ajdt.advice"
+            	label="%advice"
+            	icon="icons/markers/advice.gif"
+            	textPreferenceKey="adviceIndication"
+            	textPreferenceValue="true"
+            	overviewRulerPreferenceKey="adviceIndicationInOverviewRuler"
+            	overviewRulerPreferenceValue="true"
+            	verticalRulerPreferenceKey="adviceIndicationInVerticalRuler"
+            	verticalRulerPreferenceValue="true"
+            	colorPreferenceKey="adviceIndicationColor"
+            	colorPreferenceValue="222,109,33"
+            	presentationLayer="4">
+ 	     </specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceAndTarget"
+			icon="icons/markers/source_and_target.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.dynamicSourceAndTarget"
+			icon="icons/markers/dynamic_source_and_target.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.dynamicAdvice"
+			icon="icons/markers/dynamic_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.beforeAdvice"
+			icon="icons/markers/before_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.afterAdvice"
+			icon="icons/markers/after_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.aroundAdvice"
+			icon="icons/markers/around_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceAdvice"
+			icon="icons/markers/source_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceDynamicAdvice"
+			icon="icons/markers/source_dynamic_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceBeforeAdvice"
+			icon="icons/markers/source_before_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceAfterAdvice"
+			icon="icons/markers/source_after_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceAroundAdvice"
+			icon="icons/markers/source_around_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.dynamicBeforeAdvice"
+			icon="icons/markers/dynamic_before_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.dynamicAfterAdvice"
+			icon="icons/markers/dynamic_after_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.dynamicAroundAdvice"
+			icon="icons/markers/dynamic_around_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceDynamicBeforeAdvice"
+			icon="icons/markers/source_dynamic_before_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceDynamicAfterAdvice"
+			icon="icons/markers/source_dynamic_after_advice.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceDynamicAroundAdvice"
+			icon="icons/markers/source_dynamic_around_advice.gif">
+		</specification>
+		
+		<!-- Aspect Declaration Markers -->
+		<specification
+			annotationType="org.eclipse.ajdt.aspectDeclaration"
+			label="%aspectDeclaration"
+			icon="icons/markers/advice.gif"
+        	textPreferenceKey="decIndication"
+        	textPreferenceValue="true"
+        	overviewRulerPreferenceKey="decIndicationInOverviewRuler"
+        	overviewRulerPreferenceValue="true"
+        	verticalRulerPreferenceKey="decIndicationInVerticalRuler"
+        	verticalRulerPreferenceValue="true"
+        	colorPreferenceKey="itdIndicationColor"
+        	colorPreferenceValue="222,109,33"
+        	presentationLayer="4">
+        </specification>
+		<specification
+			annotationType="org.eclipse.ajdt.intertypeDeclaration"
+			icon="icons/markers/itd.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.annotationDeclaration"
+			icon="icons/markers/itd.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceIntertypeDeclaration"
+			icon="icons/markers/source_itd.gif">
+		</specification>
+		<specification
+			annotationType="org.eclipse.ajdt.sourceAnnotationDeclaration"
+			icon="icons/markers/source_itd.gif">
+		</specification>
+		
+		<!-- Custom marker -->
+		<specification
+      		annotationType="org.eclipse.ajdt.customAdvice"
+            	label="%customAdvice"
+            	annotationImageProvider="org.eclipse.ajdt.internal.ui.markers.CustomMarkerImageProvider"
+            	textPreferenceKey="customAdviceIndication"
+            	textPreferenceValue="true"
+            	overviewRulerPreferenceKey="customAdviceIndicationInOverviewRuler"
+            	overviewRulerPreferenceValue="true"
+            	verticalRulerPreferenceKey="customAdviceIndicationInVerticalRuler"
+            	verticalRulerPreferenceValue="true"
+            	colorPreferenceKey="customAdviceIndicationColor"
+            	colorPreferenceValue="222,109,33"
+            	presentationLayer="4">
+ 	     </specification>
+ 	     
+ 	    <specification
+			annotationType="org.eclipse.ajdt.changedAdvice"
+			label="%changedAdvice"
+			icon="icons/markers/changedadvice.gif"
+        	textPreferenceKey="changedAdviceIndication"
+        	textPreferenceValue="false"
+        	overviewRulerPreferenceKey="changedAdviceIndicationInOverviewRuler"
+        	overviewRulerPreferenceValue="false"
+        	verticalRulerPreferenceKey="changedAdviceIndicationInVerticalRuler"
+        	verticalRulerPreferenceValue="false"
+        	colorPreferenceKey="changedAdviceIndicationColor"
+        	colorPreferenceValue="255,255,0"
+        	presentationLayer="3">
+        </specification>
+	</extension>
+  
+<!-- AJDT Visualiser Provider Definition -->
+   <extension
+         id="ajdt_provider"
+         name="%ajdtProvider"
+         point="org.eclipse.contribution.visualiser.providers">
+      <provider
+            markupProviderClass="org.eclipse.ajdt.internal.ui.visualiser.AJDTMarkupProvider"
+            name="%aspectJProvider"
+            priority="10"
+            description="%aspectJProvider.description"
+            emptyMessage="%aspectJProvider.emptyMessage"
+            contentProviderClass="org.eclipse.ajdt.internal.ui.visualiser.AJDTContentProvider"
+            id="ajdtprovider"
+            paletteid="ajdtpalette">
+      </provider>
+      
+   </extension>
+   <extension
+         point="org.eclipse.contribution.visualiser.palettes">
+         <palette class="org.eclipse.ajdt.internal.ui.visualiser.AJDTPalette"
+             name="%ajdtPalette"
+             id="ajdtpalette">
+         </palette>
+   </extension>
+	 
+<extension 
+	point="org.eclipse.ui.perspectives">
+	<perspective
+		id="org.eclipse.ajdt.ui.visualiser.AspectVisualizationPerspective"
+		name="%aspectVisualizationPerspective"
+		icon="icons/aspect_visualization.gif"
+		class="org.eclipse.ajdt.internal.ui.visualiser.AspectVisualizerPerspectiveFactory">
+	</perspective>
+</extension>
+
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            lightweight="false"
+            label="%ajElementDecorator.label"
+            class="org.eclipse.ajdt.internal.ui.lazystart.ImageDecorator"
+            state="true"
+            id="org.eclipse.ajdt.ui.decorator">
+         <description>
+			%ajElementDecorator.description
+		 </description>
+         <enablement>
+            <objectClass
+                  name="java.lang.Object">
+            </objectClass>
+         </enablement>
+      </decorator>
+      <decorator
+            lightweight="true"
+            label="%advisesDecorator.label"
+            class="org.eclipse.ajdt.internal.ui.lazystart.AdviceImageDecorator"
+            state="true"
+            adaptable="true"
+            id="org.eclipse.ajdt.ui.advicedecorator">
+         <description>
+			%advisesDecorator.description
+		 </description>
+         <enablement>
+            <objectClass
+                  name="org.eclipse.jdt.core.IJavaElement">
+            </objectClass>
+         </enablement>
+      </decorator>
+   </extension>
+   
+   <extension
+         point="org.eclipse.jdt.launching.runtimeClasspathEntryResolvers">
+      <runtimeClasspathEntryResolver
+            class="org.eclipse.ajdt.internal.ui.ajde.CachedRuntimeClasspathEntryResolver"
+            runtimeClasspathEntryId="org.eclipse.jdt.launching.classpathentry.defaultClasspath"
+            id="org.eclipse.ajdt.internal.ui.cachedRuntimeClasspathEntryResolver"/>
+   </extension>
+  
+   <extension
+         point="org.eclipse.jdt.ui.quickFixProcessors">
+      <quickFixProcessor
+            name="%defaultQuickFixProcessor"
+            class="org.eclipse.ajdt.internal.ui.editor.quickfix.QuickFixProcessor"
+            id="org.eclipse.ajdt.ui.editor.quickfix.QuickFixProcessor">
+      </quickFixProcessor>
+      <quickFixProcessor
+            name="%ajQuickFixProcessor"
+            class="org.eclipse.ajdt.internal.ui.editor.quickfix.AJQuickFixProcessor"
+            id="org.eclipse.ajdt.ui.editor.quickfix.AJQuickFixProcessor">
+      </quickFixProcessor>
+      <quickFixProcessor
+            class="org.eclipse.ajdt.internal.ui.editor.quickfix.JavaQuickFixProcessor"
+            id="org.eclipse.ajdt.internal.ui.editor.quickfix.JavaQuickFixProcessor"
+            name="%javaQuickFixProcessor">
+      </quickFixProcessor>
+    </extension>
+  
+  <!-- Launching extensions -->  
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            name="%launcherName"
+            delegate="org.eclipse.ajdt.internal.launching.AJApplicationLaunchConfigurationDelegate"
+            modes="run, debug"
+            id="org.eclipse.ajdt.launching.AspectJApplication"
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
+      </launchConfigurationType>
+   </extension>
+	<extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/actions/aj_app.gif"
+            configTypeID="org.eclipse.ajdt.launching.AspectJApplication"
+            id="org.eclipse.ajdt.launchimage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.eclipse.ajdt.launching.AspectJApplication"
+            class="org.eclipse.ajdt.internal.launching.AJTabGroup"
+            id="org.eclipse.ajdt.aspectjLaunchConfigurationTabGroup.junit">
+         <launchMode
+               perspective="org.eclipse.debug.ui.DebugPerspective"
+               description="%launcherDescription"
+               mode="debug">
+         </launchMode>
+         <launchMode
+               description="%launcherDescription"
+               mode="run">
+         </launchMode>
+      </launchConfigurationTabGroup>
+   </extension>
+   
+<!-- Load-Time Weaving launch configuration -->
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            name="%ltwLauncherName"
+            delegate="org.eclipse.ajdt.internal.launching.LTWApplicationLaunchConfigurationDelegate"
+            modes="run, debug"
+            id="org.eclipse.ajdt.launching.AspectJLTWApplication"
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
+      </launchConfigurationType>
+   </extension>
+	<extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/actions/ltw_app.gif"
+            configTypeID="org.eclipse.ajdt.launching.AspectJLTWApplication"
+            id="org.eclipse.ajdt.ltwlaunchimage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.eclipse.ajdt.launching.AspectJLTWApplication"
+            class="org.eclipse.ajdt.internal.launching.LTWTabGroup"
+            id="org.eclipse.ajdt.aspectjLTWLaunchConfigurationTabGroup">
+         <launchMode
+               perspective="org.eclipse.debug.ui.DebugPerspective"
+               description="%ltwLauncherDescription"
+               mode="debug">
+         </launchMode>
+         <launchMode
+               description="%ltwLauncherDescription"
+               mode="run">
+         </launchMode>
+      </launchConfigurationTabGroup>
+   </extension>
+   
+	<!-- Extensions for launch shortcuts -->
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            label="%AspectJApplicationShortcut.label"
+            icon="icons/actions/aj_app.gif"
+            class="org.eclipse.ajdt.internal.launching.AspectJApplicationLaunchShortcut"
+            modes="run, debug"
+            id="org.eclipse.ajdt.launching.runShortcut">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                   <iterate>
+                    <adapt type="org.eclipse.jdt.core.IJavaElement">
+                      <test
+                          property="org.eclipse.debug.ui.projectNature"
+                          value="org.eclipse.ajdt.ui.ajnature">
+                      </test>
+                    </adapt>
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
+         </perspective>
+      </shortcut>
+   </extension>
+    
+   <extension
+         point="org.eclipse.contribution.xref.core.providers">
+      <xrefProvider
+            label="%ajXRefProvider"
+            enabled="true"
+            class="org.eclipse.ajdt.internal.ui.xref.AJXReferenceProvider"
+            id="org.eclipse.ajdt.ui.xref.providers.AJXReferenceProvider">
+      </xrefProvider>
+   </extension>
+
+	<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="org.eclipse.ajdt.internal.debug.ui.actions.AJRetargettableActionAdapterFactory" 
+            adaptableType="org.eclipse.ajdt.internal.ui.editor.AspectJEditor">
+            <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
+         </factory>
+    </extension>
+
+   <extension
+         point="org.eclipse.jdt.ui.javaEditorTextHovers">
+      <hover 
+            label="%pointcutSourceHover"
+            description="%pointcutSourceHoverDescription"
+            class="org.eclipse.ajdt.internal.ui.editor.PointcutSourceHover"
+            id="zorg.eclipse.ajdt.ui.PointcutSourceHover">
+      </hover>
+   </extension>
+
+  <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="iprojectcontributions">
+         <visibility>
+         	<objectState name="nature" value="org.eclipse.ajdt.ui.ajnature"/>
+         </visibility>
+         <action
+               label="%ConfigureAdviceMarkersAction"
+               class="org.eclipse.ajdt.internal.ui.markers.AJMarkersDialogAction"
+               menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+               id="org.eclipse.ajdt.dialogs.AJMarkers"
+               enablesFor="1">
+         </action>
+    	 <action
+    	 	label="%ConfigureBuildPath"   
+    	 	menubarPath="org.eclipse.ajdt.ui.feature.tools/group0"
+    		class="org.eclipse.ajdt.internal.buildpath.ConfigureAJBuildPathAction"
+    		id="configbuildpath">
+    	 </action> 
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            nameFilter="*.aj"
+            id="ajfilecontributions">
+         <visibility>
+         	<objectState name="projectNature" value="org.eclipse.ajdt.ui.ajnature"/>
+         </visibility>
+         <menu
+               label="%org.eclipse.ajdt.ui.tools"
+               id="org.eclipse.ajdt.ui.feature.tools">
+            <separator
+                  name="group0">
+            </separator>
+            <separator
+                  name="group1">
+            </separator>
+            <separator
+                  name="group2">
+            </separator>
+         </menu>
+         <action
+               label="%ConfigureAdviceMarkersAction"
+               class="org.eclipse.ajdt.internal.ui.markers.AJMarkersDialogAction"
+               menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+               id="org.eclipse.ajdt.dialogs.AJMarkers"
+               enablesFor="1">
+         </action>
+      </objectContribution>
+     </extension>
+
+      <!--	ADD TO INPATH/ASPECT PATH (existing build path entry)-->
+     <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.jdt.internal.core.JarPackageFragmentRoot"
+            id="org.eclipse.ajdt.dialogs.addtoajbuild">
+         <menu
+               label="%org.eclipse.ajdt.ui.tools"
+               id="org.eclipse.ajdt.ui.feature.tools">
+            <separator
+               name="group0">
+            </separator>
+            <separator
+               name="group1">
+            </separator>
+            <separator
+               name="group2">
+            </separator>
+         </menu> 
+    	 <action
+		     label="%AddtoInpath"
+		     menubarPath="org.eclipse.ajdt.ui.feature.tools/group0"
+    		 class="org.eclipse.ajdt.internal.buildpath.AddToInpathAction"
+    		 id="org.eclipse.ajdt.addtoinpath">
+    	 </action>
+    	 <action
+		     label="%RemoveFromInpath"
+		     menubarPath="org.eclipse.ajdt.ui.feature.tools/group0"
+    		 class="org.eclipse.ajdt.internal.buildpath.RemoveFromInpathAction"
+    		 id="org.eclipse.ajdt.removefrominpath">
+    	 </action>
+    	 <action
+		     label="%UpdateInpathRestriction"
+		     menubarPath="org.eclipse.ajdt.ui.feature.tools/group0"
+    		 class="org.eclipse.ajdt.internal.buildpath.UpdateInpathRestriction"
+    		 id="org.eclipse.ajdt.updateinpath">
+    	 </action>
+       	 <action
+		     label="%AddtoAspectpath"
+		     menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+    		 class="org.eclipse.ajdt.internal.buildpath.AddToAspectpathAction"
+    		 id="org.eclipse.ajdt.addtoaspectpath">
+    	 </action>
+    	 <action
+		     label="%RemoveFromAspectpath"
+		     menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+    		 class="org.eclipse.ajdt.internal.buildpath.RemoveFromAspectpathAction"
+    		 id="org.eclipse.ajdt.removefromAspectpath">
+    	 </action>
+    	 <action
+		     label="%UpdateAspectpathRestriction"
+		     menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+    		 class="org.eclipse.ajdt.internal.buildpath.UpdateAspectpathRestriction"
+    		 id="org.eclipse.ajdt.updateaspectpath">
+    	 </action>
+    	 <action
+    	 	label="%ConfigureBuildPath"   
+    	 	menubarPath="org.eclipse.ajdt.ui.feature.tools/group2"
+    		class="org.eclipse.ajdt.internal.buildpath.ConfigureAJBuildPathAction"
+    		id="configbuildpath">
+    	 </action>
+    	 </objectContribution>
+     </extension>
+
+    <!--	ADD TO INPATH/ASPECT PATH (JAR)-->
+      <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="false"
+            nameFilter="*.jar"
+            id="org.eclipse.ajdt.dialogs.addtoajbuild">
+          <visibility>
+             <not>
+               	<objectClass name="org.eclipse.jdt.internal.core.JarPackageFragmentRoot"/>
+            </not>	
+       	  </visibility>
+         <menu
+               label="%org.eclipse.ajdt.ui.tools"
+               id="org.eclipse.ajdt.ui.feature.tools">
+            <separator
+               name="group0">
+            </separator>
+            <separator
+               name="group1">
+            </separator>
+         </menu> 
+         <action
+		     label="%AddtoInpath"
+		     menubarPath="org.eclipse.ajdt.ui.feature.tools/group0"
+    		 class="org.eclipse.ajdt.internal.buildpath.AddToInpathAction"
+    		 id="org.eclipse.ajdt.addtoinpath">
+    	 </action>
+       	 <action
+		     label="%AddtoAspectpath"
+		     menubarPath="org.eclipse.ajdt.ui.feature.tools/group0"
+    		 class="org.eclipse.ajdt.internal.buildpath.AddToAspectpathAction"
+    		 id="org.eclipse.ajdt.addtoaspectpath">
+    	 </action>
+   	 <action
+    	 	label="%ConfigureBuildPath"   
+    	 	menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+    		class="org.eclipse.ajdt.internal.buildpath.ConfigureAJBuildPathAction"
+    		id="configbuildpath">
+    	 </action> 
+      </objectContribution>
+      </extension>
+    <!--	ADD TO INPATH/ASPECT PATH (ZIP)-->
+      <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="false"
+            nameFilter="*.zip"
+            id="org.eclipse.ajdt.dialogs.addtoajbuild">
+         <visibility>
+            <not>
+               <objectClass name="org.eclipse.jdt.internal.core.JarPackageFragmentRoot"/>
+            </not>	
+       	 </visibility>
+         <menu
+               label="%org.eclipse.ajdt.ui.tools"
+               id="org.eclipse.ajdt.ui.feature.tools">
+            <separator
+               name="group0">
+            </separator>
+            <separator
+               name="group1">
+            </separator>
+         </menu> 
+         <action
+		     label="%AddtoInpath"
+		     menubarPath="org.eclipse.ajdt.ui.feature.tools/group0"
+    		 class="org.eclipse.ajdt.internal.buildpath.AddToInpathAction"
+    		 id="org.eclipse.ajdt.addtoinpath1">
+    	 </action>
+       	 <action
+		     label="%AddtoAspectpath"
+		     menubarPath="org.eclipse.ajdt.ui.feature.tools/group1"
+    		 class="org.eclipse.ajdt.internal.buildpath.AddToAspectpathAction"
+    		 id="org.eclipse.ajdt.addtoaspectpath1">
+    	 </action>
+      </objectContribution>
+      <objectContribution
+            id="org.eclipse.ajdt.internal.ui.jarpackager.RunJarPackager"
+            nameFilter="*.jardesc"
+            objectClass="org.eclipse.core.resources.IResource">
+         <action
+               class="org.eclipse.ajdt.internal.ui.wizards.OpenAJJarPackageWizardActionDelegate"
+               enablesFor="1"
+               id="OpenAJJarPackageWizard"
+               label="%openJarPackager.label"
+               menubarPath="additions"
+               tooltip="%openJarPackager.tooltip">
+         </action>
+      </objectContribution>
+      <objectContribution
+            id="org.eclipse.ajdt.internal.ui.jarpackager.RunJarPackager"
+            nameFilter="*.jardesc"
+            objectClass="org.eclipse.core.resources.IResource">
+         <action
+               class="org.eclipse.ajdt.internal.ui.wizards.exports.CreateAJJarActionDelegate"
+               enablesFor="+"
+               id="CreateJar"
+               label="%createJarAction.label"
+               menubarPath="additions"
+               tooltip="%createJarAction.tooltip">
+         </action>
+      </objectContribution>
+      </extension>
+      <extension
+            point="org.eclipse.ui.popupMenus">
+         <objectContribution
+               adaptable="false"
+               id="org.eclipse.ajdt.ui.object.refactorings"
+               objectClass="org.eclipse.jdt.core.IJavaElement">
+            <action
+                  class="org.eclipse.ajdt.internal.ui.refactoring.PushInRefactoringAction"
+                  definitionId="org.eclipse.ajdt.ui.pushin"
+                  id="org.eclipse.ajdt.ui.action.pushin"
+                  label="Push In..."
+                  menubarPath="org.eclipse.jdt.ui.refactoring.menu/typeGroup"
+                  style="push"
+                  tooltip="Push intertype declaration into its target type">
+            </action>
+            <visibility>
+            	<or>
+                <objectState
+                      name="readOnly"
+                      value="false">
+                </objectState>
+                <objectState
+                      name="aspectElement"
+                      value="true">
+                </objectState>
+               </or>
+            </visibility>
+         </objectContribution>
+         <objectContribution
+               adaptable="false"
+               id="org.eclipse.ajdt.ui.object.refactorings"
+               objectClass="org.eclipse.jdt.core.IMember">
+            <action
+                  class="org.eclipse.ajdt.internal.ui.refactoring.pullout.PullOutRefactoringAction"
+                  definitionId="org.eclipse.ajdt.ui.pullout"
+                  id="org.eclipse.ajdt.ui.action.pullout"
+                  label="Pull Out ITD..."
+                  menubarPath="org.eclipse.jdt.ui.refactoring.menu/typeGroup"
+                  style="push"
+                  tooltip="Pull out method as intertype declaration">
+            </action>
+         </objectContribution>
+         <viewerContribution
+               id="org.eclipse.ajdt.ui.viewer.refactorings"
+               targetID="#CompilationUnitEditorContext">
+            <action
+                  class="org.eclipse.ajdt.internal.ui.refactoring.PushInRefactoringAction"
+                  definitionId="org.eclipse.ajdt.ui.pushin"
+                  id="org.eclipse.ajdt.ui.action.pushin"
+                  label="Push In..."
+                  menubarPath="org.eclipse.ajdt.ui.refactoring/itd"
+                  style="push"
+                  tooltip="Push intertype declaration into its target type">
+            </action>
+         		<menu
+               label="AspectJ Refactoring"
+               id="org.eclipse.ajdt.ui.refactoring">
+            <separator
+               name="itd"/>
+             </menu>
+         </viewerContribution>
+         <viewerContribution
+               id="org.eclipse.ajdt.ui.viewer.refactorings"
+               targetID="#CompilationUnitEditorContext">
+            <action
+                  class="org.eclipse.ajdt.internal.ui.refactoring.pullout.PullOutRefactoringAction"
+                  definitionId="org.eclipse.ajdt.ui.pullout"
+                  id="org.eclipse.ajdt.ui.action.pullout"
+                  label="Pull Out ITD..."
+                  menubarPath="org.eclipse.ajdt.ui.refactoring/itd"
+                  style="push"
+                  tooltip="Pull out member as intertype declaration">
+            </action>
+            <menu
+                  id="org.eclipse.ajdt.ui.refactoring"
+                  label="AspectJ Refactoring">
+               <separator
+                     name="itd">
+               </separator>
+            </menu>
+         </viewerContribution>
+      </extension>
+     <extension
+           point="org.eclipse.ui.navigator.navigatorContent">
+       <commonFilter
+          activeByDefault="true"
+          class="org.eclipse.ajdt.internal.ui.lazystart.CompilationUnitFilter"
+          description="%ajFileFilterDesc"
+          id="org.eclipse.ajdt.commonFilters.CompilationUnitFilter"
+          name="%ajFileFilter">
+       </commonFilter>
+    </extension>
+     <extension
+           point="org.eclipse.ui.navigator.viewer">
+        <viewerContentBinding
+              viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+           <includes>
+              <contentExtension
+                    pattern="org.eclipse.ajdt.commonFilters.CompilationUnitFilter">
+              </contentExtension>
+           </includes>
+        </viewerContentBinding>
+     </extension>
+     <extension
+           point="org.eclipse.contribution.weaving.jdt.imagedescriptorselector">
+        <selector
+              class="org.eclipse.ajdt.internal.ui.resources.AJImageDescriptorSelector">
+        </selector>
+     </extension>  
+     <extension
+           point="org.eclipse.ui.editors.documentProviders">
+        <provider
+              class="org.eclipse.ajdt.internal.ui.editor.AJCompilationUnitDocumentProvider"
+              extensions="aj"
+              id="org.eclipse.ajdt.ui.provider">
+        </provider>
+     </extension>
+     <extension
+           point="org.eclipse.ui.console.consoleFactories">
+        <consoleFactory
+              class="org.eclipse.ajdt.internal.ui.tracing.AJDTConsoleFactory"
+              icon="icons/actions/perspective.gif"
+              label="AJDT Console">
+        </consoleFactory>
+     </extension>
+	   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="Refactorings specific to AspectJ"
+            id="org.eclipse.ajdt.refactoring.category"
+            name="AspectJ Refactorings"/>
+      <command
+            categoryId="org.eclipse.ajdt.refactoring.category"
+            description="Pushes an intertypePush In declaration into its target type/"
+            id="org.eclipse.ajdt.ui.pushin"
+            name="Push In"/>
+      <command
+            categoryId="org.eclipse.ajdt.refactoring.category"
+            description="Pulls out a Java method/field into an Aspect as an intertype declaration"
+            id="org.eclipse.ajdt.ui.pullout"
+            name="Pull Out">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.refactoringContributions">
+      <contribution
+            class="org.eclipse.ajdt.internal.ui.refactoring.PushInRefactoringContribution"
+            id="org.eclipse.ajdt.ui.pushin">
+      </contribution>
+      <contribution
+            class="org.eclipse.ajdt.internal.ui.refactoring.ITDRenameRefactoringContribution"
+            id="org.eclipse.ajdt.ui.renameITD">
+      </contribution>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.classpathAttributeConfiguration">
+      <classpathAttributeConfiguration
+            attributeName="org.eclipse.ajdt.inpath.restriction"
+            class="org.eclipse.ajdt.internal.ui.wizards.InpathRestrictionAttributeConfiguration">
+      </classpathAttributeConfiguration>
+      <classpathAttributeConfiguration
+            attributeName="org.eclipse.ajdt.aspectpath.restriction"
+            class="org.eclipse.ajdt.internal.ui.wizards.AspectpathRestrictionAttributeConfiguration">
+      </classpathAttributeConfiguration>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ajdt.core.javaelements.AspectJMemberElement"
+            class="org.eclipse.ajdt.internal.ui.actions.ActionFilterAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.IActionFilter">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.contribution.jdt.itdawareness.NameEnvironmentAdapter"
+            class="org.eclipse.ajdt.ui.AJDTNameEnvironmentAdapterFactory">
+         <adapter
+               type="org.eclipse.contribution.jdt.itdawareness.INameEnvironmentProvider">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.contribution.jdt.refactoring.RefactoringAdapter"
+            class="org.eclipse.ajdt.internal.ui.refactoring.RenameProviderAdapterFactory">
+         <adapter
+               type="org.eclipse.contribution.jdt.refactoring.IRefactoringProvider">
+         </adapter>
+      </factory>
+   </extension>
+   
+   <!-- Templates -->
+	 <extension
+         point="org.eclipse.jdt.ui.javaCompletionProposalComputer"
+         id="ajdtTemplates">
+      <javaCompletionProposalComputer
+            class="org.eclipse.ajdt.internal.ui.editor.contentassist.AJTemplateCompletionProcessor"
+			      categoryId="org.eclipse.ajdt.ui.templateCategory">
+			<partition type="__dftl_partition_content_type"/>
+      </javaCompletionProposalComputer>
+    </extension>
+    <extension point="org.eclipse.ui.editors.templates">
+      <contextType
+            name="AspectJ templates"
+            class="org.eclipse.jdt.internal.corext.template.java.JavaContextType"
+            id="aspectj"
+            registryId="org.eclipse.jdt.ui.CompilationUnitEditor">
+      </contextType>
+    </extension>
+	<extension
+		point="org.eclipse.jdt.ui.javaCompletionProposalComputer"
+		id="templateCategory"
+		name="AspectJ templates">
+		<proposalCategory
+			icon="icons/structure/aspect.gif"/>
+	</extension></plugin>

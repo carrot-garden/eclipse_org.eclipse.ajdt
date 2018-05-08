@@ -1,0 +1,4 @@
+src.includes = src/
+src.excludes = src/telecom/BasicSimulation.java,\
+               src/telecom/Billing.aj,\
+               src/telecom/BillingSimulation.java

@@ -1,0 +1,124 @@
+Tests for 73859 - changes in aspectpath etc. should cause a build if "build automatically" is selected
+---------------
+
+(1) Check out "Simple AJ Project" from org.eclipse.ajdt.test/test projects
+(2) Check that "build automatically" is set (Project > build automatically)
+(3) Change the settings on the following pages in various orders:
+
+		- AspectJ 		
+		- AspectJ Aspect Path    
+		- AspectJ Compiler
+		- AspectJ Inpath 
+
+	and press "Apply" and "OK" in various orders.
+	
+	In particular, change the aspect path and compiler page at the same 
+	time and then the compiler and inpath pages at the same time and 
+	check that the expected behaviour is seen.
+	
+The following behaviour should be seen:
+
+	(1) If a build occurs it should only happen once (per click of  
+		Ok) no matter how many of the different settings you change (PREFS_1)
+	(2) if the compiler settings have changed and you choose not to build 
+		now then no build takes place (PREFS_2)
+	(3) If, after several clicks, you revert all the settings to what 
+	    they were before you started, then no build takes place (PREFS_3)
+	(4) Pressing cancel means none of the changes are set  (PREFS_4)
+	(5) Pressing apply just applies the changes to that page - a build
+	    should happen if there are changes on that page and you
+	    have chosen to build.      	 (PREFS_5)
+ 
+(4) Now choose not to build automatically and repeat the above tests. 
+	The following behaviour should now be seen:
+    
+    (1) unless compiler settings are changed, no build happens (PREFS_6)
+    (2) if the compiler settings are changed then there is a build 
+    	depending on whether you choose to do one or not in the 
+    	resulting question box.  (PREFS_7)
+ 
+Test for 76811 - AJDT's preference pages do not behave like those of the JDT
+--------------
+
+(1) Check out "Simple AJ Project" from org.eclipse.ajdt.test/test projects
+(2) Check that "build automatically" is set (Project > build automatically)
+
+
+(a) The AspectJ page:
+
+Switch to the AspectJ page and change the settings in various orders, by 
+adding text and pressing "restore defaults", "cancel" and "OK".
+
+The following behaviour should be seen:
+
+	(1) restore defaults should not change the underlying settings so 
+		pressing restore defaults --> cancel and then bringing up the 
+		project properties again should see the previous settings still 
+		visible (PREFS_8)
+	(2) restore defaults should not force a build (if the settings when
+	    you brought up the preferences were the defaults)  (PREFS_9)
+	(3) The following is the default settings:
+	
+			- nothing in the outjar field
+			- nothing in the extra compiler options field (PREFS_10)    
+			
+(b) The AspectJ Compiler page:
+
+Switch to the AspectJ compiler page.
+
+The following behaviour should be seen:
+
+	(1) When "Workspace Settings" is checked, then you cant click the 
+		tabs in the project settings (PREFS_11)
+	(2) When project settings is checked, then you can click the tabs.   (PREFS_12)
+	(3) Switching between using project and workbench settings as many 
+		times as you like but finishing on the one you started with 
+		(without making any other changes) should not prompt for a build. (PREFS_13)
+	(4) Switching between using project and workbench settings as many 
+		times as you like but finishing on the one you didn't start with 
+		(without making any other changes) should prompt for a build. (PREFS_14)
+	(5) if the preference page is brought up with project properties 
+		being used and something within that has changed, then should 
+		be always be prompted for a build (regardless of whether auto 
+		building is set or not). If at this point you decide not to build, 
+	    then no build occurs. If you decide to build now then a build 
+	    always occurs.  (PREFS_15)
+	(6) if the preference page is brought up with workspace properties 
+		being used and the workbench settings are changed by clicking on 
+		the "Change workbench settings" button, then you should be prompted 
+		for a build for the wizard where you configure the workspace
+	    settings, but not for the project properties wizard. (PREFS_16)
+	(7) if you change the workbench settings and click "apply" then make 
+		no other changes before clicking "ok" you should not be prompted 
+		for a build. (PREFS_17)
+	(8) Change something on the AspectJ page AND the compiler settings 
+		page, then press "ok" should only be prompted for a build once. (PREFS_18)
+	(9) Bringing up the preference page with "use workspace settings" 
+		check, switching to using project settings, changing a couple 
+		of the settings and then returning to using workspace settings 
+		should not prompt for a build (if haven't changed workspace settings).     (PREFS_19)    
+		
+Test for default values on AJ compiler page
+-------------------------------------------
+
+(1) Check out Simple AJ Project (must have a new version of this - not changed project
+    properties for this project yet)
+(2) Right click on Simple AJ Project > select properties > AspectJ Compiler
+(3) Click "use project settings"
+(4) navigate to the "other" tab
+(5) check that "use incremental" and "create stucture model" options are checked, 
+    whereas output weaving messages isn't.											(PREFS_20)
+    		 
+Test weaving messages output
+----------------------------
+
+(1) check out Simple AJ Project
+(2) ensure that the problems view is showing in your workbench
+(3) Right click on Simple AJ Project > select properties > AspectJ Compiler
+(4) Click "use project settings"
+(5) navigate to the "other" tab
+(6) select "output weaving info messages to problems view"
+(7) Click "ok" and in the resultant popup, choose to build now
+(8) weaving messages should be sent to the problems view  (PREFS_21)
+    		    
+	           			

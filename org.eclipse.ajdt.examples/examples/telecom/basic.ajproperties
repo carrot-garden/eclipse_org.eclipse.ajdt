@@ -1,0 +1,7 @@
+src.includes = src/
+src.excludes = src/telecom/Billing.aj,\
+               src/telecom/BillingSimulation.java,\
+               src/telecom/Timer.java,\
+               src/telecom/TimerLog.aj,\
+               src/telecom/Timing.aj,\
+               src/telecom/TimingSimulation.java

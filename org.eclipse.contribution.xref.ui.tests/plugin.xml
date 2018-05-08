@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+     <extension
+         point="org.eclipse.contribution.xref.core.providers">
+      <xrefProvider
+            label="Test XReference Provider Label"
+            enabled="true"
+            class="org.eclipse.contribution.xref.ui.tests.views.TestXRefProvider"
+            id="org.eclipse.contribution.xref.ui.tests.views.testXRefProvider">
+      </xrefProvider>
+      <xrefProvider
+            label="Test XReference Provider With Entities Label"
+            enabled="true"
+            class="org.eclipse.contribution.xref.ui.tests.views.TestXRefProviderWithEntities"
+            id="org.eclipse.contribution.xref.ui.tests.views.testXRefProviderWithEntities">
+      </xrefProvider>
+   </extension>
+</plugin>
